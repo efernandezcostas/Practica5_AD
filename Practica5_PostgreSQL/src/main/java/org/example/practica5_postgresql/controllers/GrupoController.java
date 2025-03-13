@@ -68,16 +68,28 @@ public class GrupoController {
         if (!respuesta.isEmpty()){
             return ResponseEntity.badRequest().body(respuesta);
         }
-
         return ResponseEntity.ok("Grupo añadido en PostgreSQL y MongoDB");
     }
 
     // PostgreSQL y MongoDB
     @DeleteMapping("/borrar/{id}")
     public ResponseEntity<String> borrar(@PathVariable String id){
-        delete(id);
-        restTemplate.delete("http://localhost:8080/grupos/borrar/"+id);
-        return ResponseEntity.ok("Grupo eliinado en PostgreSQL y MongoDB");
+        String respuesta = "";
+
+        ResponseEntity<String> respuestaPostgres = delete(id);
+        if (respuestaPostgres.getStatusCode() != HttpStatus.OK){
+            respuesta += "El grupo no ha sido eliminado de PostgreSQL: "+respuestaPostgres.getBody()+"\n";
+        }
+        try {
+            restTemplate.delete("http://localhost:8080/grupos/borrar/"+id);
+        } catch (HttpClientErrorException e){
+            respuesta += "El grupo no ha sido eliminado de MongoDB: "+e.getResponseBodyAsString();
+        }
+
+        if (!respuesta.isEmpty()){
+            return ResponseEntity.badRequest().body(respuesta);
+        }
+        return ResponseEntity.ok("Grupo eliminado de PostgreSQL y MongoDB");
     }
 
     private Boolean comprobarCampos(String id, String nombre){
