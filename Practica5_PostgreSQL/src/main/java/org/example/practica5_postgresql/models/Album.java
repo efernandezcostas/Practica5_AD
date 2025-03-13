@@ -2,6 +2,7 @@ package org.example.practica5_postgresql.models;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -12,7 +13,7 @@ public class Album {
 
     @ManyToOne
     @JoinColumn(name = "idgrupo")
-    private String idGrupo;
+    private Grupo idGrupo;
 
     @Column(name = "titulo", nullable = false)
     private String titulo;
@@ -20,8 +21,8 @@ public class Album {
     @Column(name = "datalanzamiento")
     private Date dataLanzamiento;
 
-    @Column(precision = 3, scale = 1)
-    private Double puntuacion;
+    @Column(name = "puntuacion", precision = 3, scale = 1)
+    private BigDecimal puntuacion;
 
     public String getId() {
         return id;
@@ -31,11 +32,11 @@ public class Album {
         this.id = id;
     }
 
-    public String getIdGrupo() {
+    public Grupo getIdGrupo() {
         return idGrupo;
     }
 
-    public void setIdGrupo(String idGrupo) {
+    public void setIdGrupo(Grupo idGrupo) {
         this.idGrupo = idGrupo;
     }
 
@@ -55,11 +56,11 @@ public class Album {
         this.dataLanzamiento = dataLanzamiento;
     }
 
-    public Double getPuntuacion() {
+    public BigDecimal getPuntuacion() {
         return puntuacion;
     }
 
-    public void setPuntuacion(Double puntuacion) {
+    public void setPuntuacion(BigDecimal puntuacion) {
         this.puntuacion = puntuacion;
     }
 

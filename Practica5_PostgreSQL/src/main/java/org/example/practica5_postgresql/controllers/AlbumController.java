@@ -24,7 +24,7 @@ public class AlbumController {
         if (albumRepository.existsById(album.getId())){
             return ResponseEntity.badRequest().body("El ID ya existe.");
         }
-        if (!grupoRepository.existsById(album.getIdGrupo())){
+        if (!grupoRepository.existsById(album.getIdGrupo().getId())){
             return ResponseEntity.badRequest().body("El ID del grupo no existe");
         }
         if (!comprobarCampos(album.getId(), album.getTitulo())){
