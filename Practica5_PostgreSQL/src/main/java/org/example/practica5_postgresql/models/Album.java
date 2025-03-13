@@ -15,6 +15,9 @@ public class Album {
     @JoinColumn(name = "idgrupo")
     private Grupo idGrupo;
 
+    @Transient
+    private String idGrupoText;
+
     @Column(name = "titulo", nullable = false)
     private String titulo;
 
@@ -62,6 +65,14 @@ public class Album {
 
     public void setPuntuacion(BigDecimal puntuacion) {
         this.puntuacion = puntuacion;
+    }
+
+    public String getIdGrupoText() {
+        return idGrupoText;
+    }
+
+    public void setIdGrupoText(String idGrupoText) {
+        this.idGrupoText = idGrupoText;
     }
 
     @Override

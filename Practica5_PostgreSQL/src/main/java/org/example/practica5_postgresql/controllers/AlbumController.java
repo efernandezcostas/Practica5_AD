@@ -1,6 +1,7 @@
 package org.example.practica5_postgresql.controllers;
 
 import org.example.practica5_postgresql.models.Album;
+import org.example.practica5_postgresql.models.Grupo;
 import org.example.practica5_postgresql.repositories.AlbumRepository;
 import org.example.practica5_postgresql.repositories.GrupoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,16 @@ public class AlbumController {
         if (albumRepository.existsById(album.getId())){
             return ResponseEntity.badRequest().body("El ID ya existe.");
         }
-        if (!grupoRepository.existsById(album.getIdGrupo().getId())){
+        if (!grupoRepository.existsById(album.getIdGrupoText())){
             return ResponseEntity.badRequest().body("El ID del grupo no existe");
+        } else {
+            Grupo grupoTemp = grupoRepository.findById(album.getIdGrupoText()).orElse(null);
+            album.setIdGrupo(grupoTemp);
         }
         if (!comprobarCampos(album.getId(), album.getTitulo())){
             return ResponseEntity.badRequest().body("El ID y el título no pueden estar vacíos");
         }
+
         albumRepository.save(album);
         return ResponseEntity.ok("Album guardado.");
     }
@@ -43,11 +48,17 @@ public class AlbumController {
         return ResponseEntity.ok("Album eliminado.");
     }
 
+    @DeleteMapping("/delete/todos")
+    public ResponseEntity<String> delete(){
+        albumRepository.deleteAll();
+        return ResponseEntity.ok("Albums eliminados");
+    }
+
     public void crear(){}
 
     public void borrar(){}
 
     private Boolean comprobarCampos(String id, String titulo){
-        return id != null && !id.isBlank() && titulo != null && titulo.isBlank();
+        return id != null && !id.isBlank() && titulo != null && !titulo.isBlank();
     }
 }
