@@ -1,5 +1,6 @@
 package org.example.practica5_postgresql.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ public class Album {
     @Id
     private String id;
 
+    @Schema(hidden = true)
     @ManyToOne
     @JoinColumn(name = "idgrupo")
     private Grupo idGrupo;

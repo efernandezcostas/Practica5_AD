@@ -1,5 +1,8 @@
 package org.example.practica5_postgresql.controllers;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.practica5_postgresql.models.Album;
 import org.example.practica5_postgresql.models.AlbumMongo;
 import org.example.practica5_postgresql.models.Grupo;
@@ -26,6 +29,12 @@ public class AlbumController {
         this.restTemplate = new RestTemplate();
     }
 
+    @Operation(summary = "Guarda un Album", description = "Guarda un Album en PostgreSQL y devuelve un ResponseEntity en función de si se guardó correctamente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Album guardado correctamente."),
+                    @ApiResponse(responseCode = "400", description = "<ul><li>El ID y el título no pueden estar vacíos.</li><li>El ID ya existe.</li><li>El ID del grupo no existe</li></ul>")
+            }
+    )
     @PostMapping("/add")
     public ResponseEntity<String> add(@RequestBody Album album){
         if (albumRepository.existsById(album.getId())){
@@ -46,6 +55,12 @@ public class AlbumController {
         return ResponseEntity.ok("Album guardado.");
     }
 
+    @Operation(summary = "Elimina un album", description = "Elimina un grupo de PostgreSQL y devuelve un ResponseEntity en función de si se eliminó correctamente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Grupo eliminado correctamente."),
+                    @ApiResponse(responseCode = "400", description = "El ID no existe.")
+            }
+    )
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable String id){
         if (!albumRepository.existsById(id)){
@@ -55,12 +70,29 @@ public class AlbumController {
         return ResponseEntity.ok("Album eliminado.");
     }
 
+    @Operation(summary = "Elimina todos los albums", description = "Elimina todos los albums de PostgreSQL y devuelve un ResponseEntity en función de si se eliminaron correctamente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Albums eliminados correctamente."),
+            }
+    )
     @DeleteMapping("/delete/todos")
     public ResponseEntity<String> delete(){
         albumRepository.deleteAll();
         return ResponseEntity.ok("Albums eliminados");
     }
 
+    @Operation(summary = "Guarda un Album en PostgreSQL y MongoDB",
+            description = "Guarda un Album en PostgreSQL y MongoDB. Devuelve un ResponseEntity en función de si se guardaron correctamente" +
+                    "</br></br>Utiliza '/albums/add' de PostgreSQL y '/albums/crear' de MongoDB.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Album guardado correctamente en ambas bbdd."),
+                    @ApiResponse(responseCode = "400", description = "<ul><li>El Album no ha sido añadido a PostgreSQL: (motivo).</li><li>El Album no ha sido añadido a MongoDB: (motivo).</li></ul>")
+            },
+            externalDocs = @ExternalDocumentation(
+                    description = "Documentación MongoDB",
+                    url = "http://localhost:8080/swagger-ui/index.html#/album-controller/crear_1"
+            )
+    )
     @PostMapping("/crear")
     public ResponseEntity<String> crear(@RequestBody Album album){
         String respuesta = "";
@@ -82,6 +114,18 @@ public class AlbumController {
         return ResponseEntity.ok("Album añadido en PostgreSQL y MongoDB");
     }
 
+    @Operation(summary = "Elimina un Album de PostgreSQL y MongoDB",
+            description = "Elimina un Album de PostgreSQL y MongoDB. Devuelve un ResponseEntity en función de si se eliminaron correctamente" +
+                    "</br></br>Utiliza '/albums/delete/{id}' de PostgreSQL y '/albums/borrar/{id}' de MongoDB.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Album eliminado correctamente de ambas bbdd."),
+                    @ApiResponse(responseCode = "400", description = "<ul><li>El Album no ha sido eliminado de PostgreSQL: (motivo).</li><li>El Album no ha sido eliminado de MongoDB: (motivo).</li></ul>")
+            },
+            externalDocs = @ExternalDocumentation(
+                    description = "Documentación MongoDB",
+                    url = "http://localhost:8080/swagger-ui/index.html#/album-controller/borrar_1"
+            )
+    )
     @DeleteMapping("/borrar/{id}")
     public ResponseEntity<String> borrar(@PathVariable String id){
         String respuesta = "";
